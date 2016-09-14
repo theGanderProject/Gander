@@ -1,0 +1,21 @@
+.advanced-wrapper {
+  box-shadow: 0px 0px 10px #ccc;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  float: left;
+  margin-left: 3%;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.editor-container {
+  height: 400px;
+}
+.toolbar-container {
+  border-bottom: 1px solid #ccc;
+}
+div#content-container {
+    overflow: hidden;
+}
+span.ql-picker-options {
+    background: #f5f5f5;
+}

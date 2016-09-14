@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block styles %}
+  #placeholder {
+    filter: blur(15px)";
+    -webkit-filter: blur(15px)";
+  }
+{% endblock %}
+{% block body %}
+<div id="spacer" style="width: 1px; height: 2500px;">
+</div>
+<div id="slow_load" style="opacity: 0; display: fixed;">
+<div style="text-align: center;"><img id="placeholder" src="{{ image.thumbnail.url }}" width="0" height="0"><img id="zoomable_img" src="{{ image.original.url }}" style="max-width: 100%; opacity: 0; position: absolute;" width="0" height="0"></div>
+<br>
+<br>
+Title: {{ image.title }}<br>
+Owner: {{ image.owner }}<br>
+Description: {{ image.description }}<br>
+Added: <time class="timeago" datetime="{{ image.added|date:'c' }}"></time><br>
+---------
+
+<span id="favorite" style="font-size: 30px; {% if image.owner == user %}display: none;{% endif %}" class="glyphicon {% if user in image.favorite.all %}glyphicon-star{% else %} glyphicon-star-empty {% endif %}"></span>
+
+Need to make that star...depending upon if user has faved...
+and if it's your own work, perhaps fave icon shouldn't appear to begin with
+so find out if user has faved the work to begin with
+is fave:<br>
+<br><br><br><br>{% if user in image.favorite.all %} this is already favorited {% endif %}<br><br><br><br><br>
+
+
+Add comments here<br><br>
+Add tags here<br><br>
+
+<!--<div style="max-width: 400px;"><select class="tags form-control" multiple="true"></select></div>-->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/visual_art/view.js"></script>
+<script src="/static/jquery.timeago.js"></script>
+<script>
+
+var csrftoken = Cookies.get('csrftoken');
+
+
+function add_or_remove_favorite(){
+    $.ajax({
+        type:"POST",
+        beforeSend: function (request)
+        {
+            request.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        url: "/art/view/{{image.pk}}/favorite",
+        error: function(msg) {
+            console.log(msg);
+        },
+        success: function(msg) {
+          console.log("message from server:");
+          if(msg == 'added favorite'){
+            $('#favorite').removeClass('glyphicon-star-empty').addClass('glyphicon-star');
+          } else if(msg == 'removed favorite') {
+            $('#favorite').removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+          }
+          console.log(msg);
+        }
+    });
+}
+
+$('#favorite').click(function(){
+    add_or_remove_favorite();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block body %}
+<ul id="sortable">
+{% for image in images %}
+{% include 'thumbnails.html' %}
+{% endfor %}
+</ul>
+</body>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/Sortable.min.js"></script>
+<script>
+var sortable = document.getElementById('sortable');
+Sortable.create(sortable, {
+    animation: 150,
+    draggable: 'div',
+});
+</script>
+{% endblock %}

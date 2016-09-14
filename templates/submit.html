@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block body %}
+    <form id="submit" enctype="multipart/form-data" method="POST">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="Submit" />
+    </form>
+    <br>
+    <br>
+    <form action="/art/submit/"
+          class="dropzone"
+          id="my-awesome-dropzone"></form>
+
+          {% block inserthere %}
+          {% endblock%}
+
+
+{% endblock %}

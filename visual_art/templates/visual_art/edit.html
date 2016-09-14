@@ -1,0 +1,208 @@
+{% extends 'submit.html' %}
+
+{% block above_head %}
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
+{% endblock %}
+
+{% block externalstyles %}
+<link rel="stylesheet" href="/static/selectize.bootstrap3.css">
+{% endblock %}
+
+{% block inserthere %}
+<br><br><br><br><br><br>
+Tags:<br>
+<br>
+
+
+
+
+<input type="text" id="tags" style="width: 300px;"></select>
+
+
+<br><br><br><br><br>
+{% endblock%}
+
+
+
+{% block scripts %}
+<!--[if IE 8]><script src="/static/es5.js"></script><![endif]-->
+<script type="text/javascript" src="/static/selectize.min.js"></script>
+<script src="/static/jquery-ui.min.js"></script>
+<script>
+$(function() {
+    $('#tags').selectize({
+      create: true,
+    });
+});
+/*
+$('.authorsearch').selectize({
+    valueField: 'AuthorId',
+    labelField: 'AuthorName',
+    searchField: ['AuthorName'],
+    maxOptions: 10,
+    /*
+    create: function (input, callback) {
+        $.ajax({
+            url: '/art/tags',
+            data: { 'AuthorName': input },
+            type: 'POST',
+            dataType: 'json',
+            error: function() {
+              console.log("within create error");
+            },
+            success: function (response) {
+                console.log("within create success");
+                return callback(response);
+            }
+        });
+    },
+    render: {
+        option: function (item, escape) {
+            console.log("within render");
+            return '<div>' + escape(item.AuthorName) + '</div>';
+        }
+    },
+    load: function (query, callback) {
+        if (!query.length) return callback();
+        $.ajax({
+            url: '/art/tags',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                q: query
+            },
+            error: function () {
+                console.log("within load error");
+                callback();
+            },
+            success: function (res) {
+                callback(res);
+                console.log("within load success");
+
+            }
+        });
+    }
+});
+/*
+$('.input-tags').selectize({
+  plugins: ['remove_button'],
+  persist: false,
+  create: true,
+  render: {
+    option: function(data, escape) {
+      console.log("got into the render function");
+      return '<div>"' + escape(data.text) + '"</div>';
+    }
+  },
+  load: function(query, callback) {
+      if (!query.length) return callback();
+      $.ajax({
+          url: '/art/tags',
+          type: 'GET',
+          //dataType: 'json',
+          data: {q: query,},
+          success: function(res) {
+              console.log(res.tags);
+              callback(res);
+          }
+      });
+  },
+});*/
+
+var csrftoken = Cookies.get('csrftoken');
+
+var time_since_last_unsaved_edit;
+
+function saveChanges(){
+
+  $.ajax({
+          type:"POST",
+          beforeSend: function (request)
+          {
+              request.setRequestHeader("X-CSRFToken", csrftoken);
+          },
+          url: "/art/edit/{{image.pk}}/",
+          data: $("#submit").serialize(),
+          error: function(msg) {
+              console.log(msg);
+          },
+          success: function(msg) {
+            console.log("saved the desc/title");
+            //console.log(msg);
+            saved = true;
+          }
+  });
+
+}
+
+
+$('#id_description').on('input propertychange change', function() {
+    saved = false;
+
+    clearTimeout(time_since_last_unsaved_edit);
+    time_since_last_unsaved_edit = setTimeout(function() {
+        saveChanges();
+        // Runs 1 second (1000 ms) after the last change    
+        //uploadStory();
+        console.log("saving desc");
+    }, 1000);
+});
+
+var saved = true;
+
+window.onbeforeunload = function() {
+  saveChanges();
+  if ( ! saved ){
+    return "Your changes haven't been saved yet. Are you sure you want to leave?";
+  }
+}
+
+
+/*
+function uploadStory(){
+
+  $.ajax({
+          type:"POST",
+          beforeSend: function (request)
+          {
+              request.setRequestHeader("X-CSRFToken", csrftoken);
+          },
+          url: "/writing/submit/",
+          data: { upload : editor.getHTML()},
+          error: function(msg) {
+              $("body").html(msg);
+          },
+          success: function(msg) {
+            console.log("uploaded the text");
+            console.log(msg);
+            saved = true;
+          }
+  });
+
+}
+
+var time_since_last_unsaved_edit;
+var saved = true;
+
+window.onbeforeunload = function() {
+  uploadStory();
+  if ( ! saved ){
+    return "Your changes haven't been saved yet. Are you sure you want to leave?";
+  }
+}
+
+$('#editor').on('input propertychange change', function() {
+    console.log('Textarea Change');
+    saved = false;
+
+    clearTimeout(time_since_last_unsaved_edit);
+    time_since_last_unsaved_edit = setTimeout(function() {
+        // Runs 1 second (1000 ms) after the last change    
+        uploadStory();
+    }, 4000);
+});*/
+</script>
+{% endblock scripts %}

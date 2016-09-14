@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block body %}
+{% for image in images %}
+{% include 'thumbnails.html' %}
+{% endfor %}
+{% endblock %}
