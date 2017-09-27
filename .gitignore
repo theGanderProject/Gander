@@ -1,5 +1,0 @@
-media
-media_for_tests
-db.sqlite3
-*.pyc
-__pycache__
